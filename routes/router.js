@@ -6,11 +6,14 @@ const getDocumentHandler = require("./handler/document/getDocumentHandler");
 const registerHandler = require("./handler/users/registeruserHandler");
 const loginHandler = require("./handler/users/loginHandler");
 const getApprovedHandler = require("./handler/approved/getDataApprovedHandler");
+const approvedHandler = require("./handler/approved/approvedHandler");
 
 router.post("/addDocument", addDocumentHandler);
 router.get("/getDocument/:id", getDocumentHandler);
 router.post("/register", registerHandler);
-router.post("/login/:id", loginHandler);
+router.post("/login", loginHandler);
+router.post("/approved/:id", approvedHandler);
+
 router.get("/:token", getApprovedHandler);
 
 module.exports = router;

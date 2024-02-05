@@ -5,8 +5,8 @@ const PASSKEY = process.env.PASSKEY;
 
 function loginHandler(req, res) {
   const { username, password } = req.body;
-  const documentID = req.params.id;
-  console.log(req.body);
+  // const documentID = req.params.id;
+  console.log(username + password);
 
   const querypassword = `SELECT password FROM users WHERE username = ?`;
 

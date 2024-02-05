@@ -6,7 +6,7 @@ const PASSKEY = process.env.PASSKEY;
 function approvedHandler(req, res) {
   const getUserIDQuery = `SELECT id FROM users WHERE username = ?`;
   const getDocumentQuery = `SELECT * FROM document WHERE id_document = ?`;
-  const insertApprovedDocuemnt = `INSERT INTO approved (user_id, id_document, document_name, document_source, approved, date, token) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  const insertApprovedDocuemnt = `INSERT INTO approved (username, id_document, document_name, document_source, approved, date, token) VALUES (?, ?, ?, ?, ?, ?, ?)`;
   const documentID = req.params.id;
   const { username } = req.body;
 
@@ -22,21 +22,22 @@ function approvedHandler(req, res) {
           if (error) {
             res.status(500).send(error.message);
           } else {
-            const { id } = results[0];
-            const checkApprovedQuery = `SELECT * FROM approved WHERE user_id = ? AND id_document = ?`;
+            // const { id } = results[0];
+            const checkApprovedQuery = `SELECT * FROM approved WHERE username = ? AND id_document = ?`;
             connection.query(
               checkApprovedQuery,
-              [id, documentID],
+              [username, documentID],
               function (error, checkresults) {
                 if (error) {
                   res.status(500).send(error.message);
                 } else if (checkresults.length > 0) {
-                  res
-                    .status(200)
-                    .send({ message: "Document already approved" });
+                  res.status(200).json({
+                    message: "Document Already Approved",
+                    checkresults,
+                  });
                 } else {
                   const approvedData = {
-                    user_id: id,
+                    username: username,
                     id_document: documentID,
                     document_name: document_name,
                     document_source: document_source,
@@ -50,7 +51,7 @@ function approvedHandler(req, res) {
                   connection.query(
                     insertApprovedDocuemnt,
                     [
-                      id,
+                      username,
                       documentID,
                       document_name,
                       document_source,
@@ -62,7 +63,10 @@ function approvedHandler(req, res) {
                       if (error) {
                         res.status(500).send(error.message);
                       } else {
-                        res.json({ result: results });
+                        res.json({
+                          message: "Approved Succesful",
+                          results,
+                        });
                       }
                     }
                   );

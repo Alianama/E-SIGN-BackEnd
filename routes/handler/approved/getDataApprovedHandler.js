@@ -4,7 +4,7 @@ require("dotenv").config();
 const PASSKEY = process.env.PASSKEY;
 
 function getApprovedHandler(req, res) {
-  const id = req.params.token;
+  const id = req.params.id;
 
   const getDataquery = `SELECT token FROM approved WHERE id = ?`;
 
@@ -17,7 +17,7 @@ function getApprovedHandler(req, res) {
         CryptoJS.enc.Utf8
       );
       const parseddata = JSON.parse(dataApproved);
-      res.json(parseddata);
+      return res.json({ parseddata, status: "success" });
     } else {
       res.status(401).send({ message: "Invalid ID" });
     }

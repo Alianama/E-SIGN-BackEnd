@@ -14,6 +14,6 @@ router.post("/register", registerHandler);
 router.post("/login", loginHandler);
 router.post("/approved/:id", approvedHandler);
 
-router.get("/:token", getApprovedHandler);
+router.get("/getapprove/:id", getApprovedHandler);
 
 module.exports = router;

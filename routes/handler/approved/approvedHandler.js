@@ -16,13 +16,13 @@ function approvedHandler(req, res) {
     } else {
       if (results.length > 0) {
         const { document_name, document_source } = results[0];
-        const date = new Date();
+        const rawdate = new Date();
+        const date = rawdate.toISOString().split("T")[0];
 
         connection.query(getUserIDQuery, [username], function (error, results) {
           if (error) {
             res.status(500).send(error.message);
           } else {
-            // const { id } = results[0];
             const checkApprovedQuery = `SELECT * FROM approved WHERE username = ? AND id_document = ?`;
             connection.query(
               checkApprovedQuery,
@@ -31,7 +31,7 @@ function approvedHandler(req, res) {
                 if (error) {
                   res.status(500).send(error.message);
                 } else if (checkresults.length > 0) {
-                  res.status(200).json({
+                  return res.status(200).json({
                     message: "Document Already Approved",
                     checkresults,
                   });
@@ -59,14 +59,26 @@ function approvedHandler(req, res) {
                       date,
                       token,
                     ],
-                    function (error, results) {
+                    function (error, checkresults) {
                       if (error) {
                         res.status(500).send(error.message);
                       } else {
-                        res.json({
-                          message: "Approved Succesful",
-                          results,
-                        });
+                        const { insertId } = checkresults;
+                        const GetApprovedQuery = `SELECT * FROM approved WHERE id = ?`;
+                        connection.query(
+                          GetApprovedQuery,
+                          [insertId],
+                          function (error, checkresults) {
+                            if (error) {
+                              return res.status(500).send(error.message);
+                            } else if (checkresults.length > 0) {
+                              return res.status(200).json({
+                                message: "Approved Successful",
+                                checkresults,
+                              });
+                            }
+                          }
+                        );
                       }
                     }
                   );

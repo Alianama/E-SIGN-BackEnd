@@ -9,6 +9,5 @@ const database = {
 };
 
 const connection = mysql.createConnection(database);
-console.log(database.host);
 
 module.exports = connection;

@@ -6,7 +6,7 @@ const PASSKEY = process.env.PASSKEY;
 function approvedHandler(req, res) {
   const getUserIDQuery = `SELECT * FROM users WHERE username = ?`;
   const getDocumentQuery = `SELECT * FROM document WHERE id_document = ?`;
-  const insertApprovedDocuemnt = `INSERT INTO approved ( name, department, id_document, document_name, document_source, approved, date, token) VALUES (?,?, ?, ?, ?, ?, ?, ?)`;
+  const insertApprovedDocuemnt = `INSERT INTO approved (username, name, department, id_document, document_name, document_source, approved, date, token) VALUES (?,?,?, ?, ?, ?, ?, ?, ?)`;
   const documentID = req.params.id;
   const { username } = req.body;
 
@@ -38,7 +38,6 @@ function approvedHandler(req, res) {
                   });
                 } else {
                   const approvedData = {
-                    // username: username,
                     name: name,
                     department: department,
                     id_document: documentID,
@@ -54,7 +53,7 @@ function approvedHandler(req, res) {
                   connection.query(
                     insertApprovedDocuemnt,
                     [
-                      // username,
+                      username,
                       name,
                       department,
                       documentID,

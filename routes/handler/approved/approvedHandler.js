@@ -4,9 +4,9 @@ require("dotenv").config();
 const PASSKEY = process.env.PASSKEY;
 
 function approvedHandler(req, res) {
-  const getUserIDQuery = `SELECT id FROM users WHERE username = ?`;
+  const getUserIDQuery = `SELECT * FROM users WHERE username = ?`;
   const getDocumentQuery = `SELECT * FROM document WHERE id_document = ?`;
-  const insertApprovedDocuemnt = `INSERT INTO approved (username, id_document, document_name, document_source, approved, date, token) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  const insertApprovedDocuemnt = `INSERT INTO approved ( name, department, id_document, document_name, document_source, approved, date, token) VALUES (?,?, ?, ?, ?, ?, ?, ?)`;
   const documentID = req.params.id;
   const { username } = req.body;
 
@@ -23,6 +23,7 @@ function approvedHandler(req, res) {
           if (error) {
             res.status(500).send(error.message);
           } else {
+            const { name, department } = results[0];
             const checkApprovedQuery = `SELECT * FROM approved WHERE username = ? AND id_document = ?`;
             connection.query(
               checkApprovedQuery,
@@ -37,7 +38,9 @@ function approvedHandler(req, res) {
                   });
                 } else {
                   const approvedData = {
-                    username: username,
+                    // username: username,
+                    name: name,
+                    department: department,
                     id_document: documentID,
                     document_name: document_name,
                     document_source: document_source,
@@ -51,7 +54,9 @@ function approvedHandler(req, res) {
                   connection.query(
                     insertApprovedDocuemnt,
                     [
-                      username,
+                      // username,
+                      name,
+                      department,
                       documentID,
                       document_name,
                       document_source,

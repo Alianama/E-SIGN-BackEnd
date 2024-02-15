@@ -7,9 +7,9 @@ function getAllDataApproved(req, res) {
 
   connection.query(GetDataQuery, [username], function (err, data) {
     if (err) {
-      res.status(500).send(err.message);
+      return res.status(500).send(err.message);
     } else {
-      return res.status(200).json(data);
+      return res.status(200).json({ message: "success", data: data });
     }
   });
 }

@@ -14,7 +14,7 @@ router.get("/getDocument/:id", getDocumentHandler);
 router.post("/register", registerHandler);
 router.post("/login", loginHandler);
 router.post("/approved/:id", approvedHandler);
-router.get("/getallapproved", getAllApprovedHandler);
+router.post("/getallapproved", getAllApprovedHandler);
 router.get("/getapprove/:id", getApprovedHandler);
 
 module.exports = router;

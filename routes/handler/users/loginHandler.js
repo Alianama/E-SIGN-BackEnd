@@ -5,7 +5,7 @@ const PASSKEY = process.env.PASSKEY;
 
 function loginHandler(req, res) {
   const { username, password } = req.body;
-  // const documentID = req.params.id;
+
   console.log(username + password);
 
   const querypassword = `SELECT password FROM users WHERE username = ?`;
@@ -20,7 +20,30 @@ function loginHandler(req, res) {
         PASSKEY
       ).toString(CryptoJS.enc.Utf8);
       if (decryptedPassword === password) {
-        res.status(200).send({ message: "Login Succesfully" });
+        const inserToken = `UPDATE users SET token = ? WHERE username = ?`;
+        const loginAt = new Date();
+        const loginEnd = new Date(loginAt.getTime() + 3600000);
+
+        const tokenraw = {
+          username: username,
+          loginAt: loginAt.toLocaleTimeString("en-US", { timeStyle: "medium" }),
+          loginEnd: loginEnd.toLocaleTimeString("en-US", {
+            timeStyle: "medium",
+          }),
+        };
+
+        const token = CryptoJS.AES.encrypt(
+          JSON.stringify(tokenraw),
+          PASSKEY
+        ).toString();
+
+        connection.query(inserToken, [token, username], function (err, result) {
+          if (err) {
+            return res.status(500).send(err.message);
+          } else {
+            return res.status(200).send({ message: "Login Succesfully" });
+          }
+        });
       } else {
         return res.status(401).json({ message: "Wrong Password" });
       }

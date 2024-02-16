@@ -2,6 +2,7 @@ const connection = require("../../config/config");
 const CryptoJS = require("crypto-js");
 require("dotenv").config();
 const PASSKEY = process.env.PASSKEY;
+const moment = require("moment");
 
 function approvedHandler(req, res) {
   const getUserIDQuery = `SELECT * FROM users WHERE username = ?`;
@@ -16,8 +17,7 @@ function approvedHandler(req, res) {
     } else {
       if (results.length > 0) {
         const { document_name, document_source } = results[0];
-        const rawdate = new Date();
-        const date = rawdate.toISOString().split("T")[0];
+        const date = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss");
 
         connection.query(getUserIDQuery, [username], function (error, results) {
           if (error) {
